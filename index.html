@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>16-Animal Risk Attitude Assessment</title>
-<meta http-equiv="refresh" content="0;url=https://metal-cattle-98mvq.ship.place/">
-<script>location.replace("https://metal-cattle-98mvq.ship.place/");</script>
-</head>
-<body style="font-family:system-ui,sans-serif;text-align:center;padding:3rem;color:#334155">
-<p>Opening the assessment…</p>
-<p><a href="https://metal-cattle-98mvq.ship.place/">Click here if you are not redirected</a></p>
-</body>
-</html>
+</head><body>
+<script>
+(async()=>{
+const n=6;
+const parts=await Promise.all([...Array(n)].map((_,i)=>fetch('d'+i+'.txt').then(r=>r.text())));
+const bin=atob(parts.join(''));
+const bytes=new Uint8Array(bin.length);
+for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+const html=new TextDecoder().decode(bytes);
+document.open();document.write(html);document.close();
+})().catch(e=>{document.body.textContent='Load failed: '+e});
+</script>
+</body></html>

@@ -1,7 +1,7 @@
 # 16-Animal Risk Attitude Assessment
 
-Public assessment link (source not published in this repo):
+Live site (after enabling GitHub Pages):
 
-**https://metal-cattle-98mvq.ship.place/**
+**https://phkds6.github.io/16-animal-risk-assessment/**
 
-Works on phone and computer.
+Settings → Pages → Deploy from branch `main` / root → Save.
