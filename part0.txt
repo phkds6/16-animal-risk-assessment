@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16-Animal Risk Attitude Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:radial-gradient(1000px 480px at 6% -10%,#E0E7FF 0%,transparent 55%),radial-gradient(900px 420px at 100% 0,#EEF2FF 0%,transparent 50%),radial-gradient(700px 360px at 50% 100%,#F1F5F9 0%,transparent 45%),#F8FAFC;background-attachment:fixed;color:#334155}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.rise{animation:rise .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes bob{0%,100%{transform:translateY(2px) rotate(-5deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+.bob{animation:bob 2s ease-in-out infinite}
+@keyframes shadowpulse{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.55);opacity:.18}}
+.shadowpulse{animation:shadowpulse 2s ease-in-out infinite}
+@keyframes pop{0%{transform:scale(.9)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+.pop{animation:pop .28s ease-out}
+@keyframes jump{0%{transform:scale(1)}30%{transform:scale(.9,1.08) translateY(-12px)}60%{transform:scale(1.06,.94)}100%{transform:scale(1)}}
+.jump{animation:jump .55s ease-out}
+@keyframes twinkle{0%,100%{opacity:.12;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+.twinkle{animation:twinkle 2.6s ease-in-out infinite}
+.card{background:rgba(255,255,255,.94);border:1px solid #e2e8f0;border-radius:1.125rem;box-shadow:0 1px 2px rgba(15,23,42,.04),0 10px 28px -14px rgba(15,23,42,.12);backdrop-filter:blur(10px)}
+.card-soft{background:rgba(255,255,255,.78);border:1px solid #e2e8f0;border-radius:1.125rem}
+.hero-glow{box-shadow:0 25px 50px -20px rgba(79,70,229,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+.opt{transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease,transform .12s ease}
+.opt:hover{border-color:#a5b4fc;background:rgba(238,242,255,.55)}
+.opt.on{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 1px rgba(99,102,241,.12),0 4px 14px -6px rgba(99,102,241,.25)}
+.btn-primary{background:linear-gradient(180deg,#6366f1 0%,#4f46e5 100%);box-shadow:0 1px 2px rgba(79,70,229,.25),0 8px 20px -8px rgba(79,70,229,.45)}
+.btn-primary:hover{background:linear-gradient(180deg,#4f46e5 0%,#4338ca 100%);box-shadow:0 1px 2px rgba(67,56,202,.3),0 10px 24px -8px rgba(67,56,202,.5)}
+.progress-track{background:#e2e8f0;border-radius:999px;overflow:hidden;height:6px}
+.progress-fill{background:linear-gradient(90deg,#818cf8,#6366f1);border-radius:999px;height:100%;transition:width .4s cubic-bezier(.22,1,.36,1)}
+button{transition:transform .15s ease,box-shadow .2s ease,background-color .2s ease,opacity .15s ease}
+button:active{transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){.bob,.shadowpulse,.twinkle,.pop,.jump{animation:none}.rise{animation:none}*{transition:none!important;scroll-behavior:auto!important}}
+@page{margin:12mm}
+@media print{
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important;transition:none!important}
+.noprint{display:none!important}
+body{background:#F8FAFC;background-attachment:scroll}
+section,main>div,.rounded-2xl,.rounded-3xl,.card{break-inside:avoid}
+}
+</style>
+</head>
+<body class="min-h-screen text-slate-700">
+<div id="app"></div>
+<script type="module">
+const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+/* PASTE YOUR FIREBASE WEB CONFIG HERE (Firebase console > Project settings > Your apps > Web app).
+   Example: { apiKey: "...", authDomain: "...", projectId: "...", appId: "..." }
+   Leave as null if the hosting environment already provides __firebase_config. */
+const MY_FIREBASE_CONFIG = null;
+let firebaseConfig = MY_FIREBASE_CONFIG;
+try { if (!firebaseConfig && typeof __firebase_config !== "undefined") firebaseConfig = JSON.parse(__firebase_config); } catch (e) { console.error(e); }
+const PAGES = [
+  { title: "Time Horizon & Holding Duration", range: [0, 6] },
+  { title: "Advanced Governance & Strategic Execution", range: [6, 12] },
+  { title: "Behavioral Psychology & Stress Responses", range: [12, 18] },
+];
+
+const Q = [
+  ["Once you invest, how long do you plan to keep the money in?", [["Less than 1 month (very short-term trading)", "T"], ["1 to 6 months (short-term swings)", "T"], ["6 months to 2 years (medium to long term)", "L"], ["More than 2 years (long-term holding)", "L"]]],
+  ["How often do you buy and sell or change what you own?", [["Very often, about once a week", "T"], ["About once a month", "T"], ["Every two to three months", "L"], ["Rarely, holding the same assets for years", "L"]]],
+  ["Which type of return matters most to you?", [["Steady cash payouts (dividends)", "V"], ["Profits from selling after prices rise", "G"], ["Long-term wealth as companies grow larger", "G"], ["Buying cheap companies and waiting for a rebound", "V"]]],
+  ["What is the most important driver of extra returns?", [["Following short-term trends and hot topics", "G"], ["Finding strong companies with deep competitive advantages and sticking with them", "F"], ["Holding high-dividend stocks and reinvesting the cash", "V"], ["Spreading money across different assets to lower risk", "D"]]],
+  ["Which type of company do you prefer?", [["Big, stable companies with low prices and high payouts", "V"], ["Faster-growing companies with higher valuations", "G"], ["Trendy companies backed by government plans and policies", "G"], ["Any style, as long as the price is right", "V"]]],
+  ["What is the largest one-year loss you can tolerate?", [["Less than 5% (capital preservation first)", "C"], ["5% to 15% (small swings are fine)", "C"], ["15% to 30% (I can handle bigger swings)", "B"], ["More than 30% (I accept big risk for higher return)", "B"]]],
+  ["A stock you own drops 20%. What do you usually do?", [["Sell right away to stop further losses", "C"], ["Wait and watch for a few weeks", null], ["Keep holding because I believe in the long-term plan", null], ["Buy more to lower my average cost, since the business is solid", "B"]]],
+  ["How many stocks or funds do you like to hold at once?", [["Just a few (1 to 3)", "F"], ["A moderate number (4 to 8)", "F"], ["Many (10 or more) to spread risk", "D"], ["A basket of index funds only", "D"]]],
+  ["How do you spread money across industries?", [["Most in one or two favorite industries", "F"], ["Balanced across 3 to 5 industries", "F"], ["As many industries as possible, for safety", "D"], ["No industry picks; broad market index funds", "D"]]],
+  ["Which kind of industry do you like best?", [["Traditional industries with steady cash flow and clear earnings", "V"], ["Fast-growing tech industries with big potential", "G"], ["Industries supported by government plans and policies", "G"], ["Struggling industries likely to make a comeback", "V"]]],
+  ["Which safe, steady sector would you choose to protect your money?", [["Consumer staples and food and drink", "V"], ["Healthcare, medicine and biotech", "C"], ["Banks, insurance and large finance", "V"], ["No safe sector catches my eye right now", null]]],
+  ["Which high-growth sector would you choose?", [["Tech, internet, chips and AI", "G"], ["Green energy (solar, wind, EVs)", "G"], ["Defense and advanced manufacturing", "G"], ["Basic manufacturing (chemicals, metals, machinery)", "V"]]],
+  ["Which part of the stock market do you watch most?", [["Large blue-chip stocks on the main boards", "C"], ["Fast-growing tech and startup boards", "G"], ["High-tech innovation boards", "G"], ["Small or micro-cap stocks", "B"]]],
+  ["What company size do you prefer to buy?", [["Industry giants with strong market power", "C"], ["Medium-sized growing companies", "G"], ["Small companies with explosive growth potential", "B"], ["Size does not matter if the company is good", null]]],
+  ["Which investment would you most like to buy?", [["Large, stable stocks paying regular dividends", "V"], ["High-growth tech stocks doing very well now", "G"], ["Funds focused on a specific trend or industry", "G"], ["Broad market index funds", "D"]]],
+  ["What finally makes you decide to buy?", [["Clear government rules or major events helping the industry", "G"], ["Earnings reports that beat expectations", "L"], ["A cheap price with good safety and a dividend", "V"], ["Computer signals showing a breakout or heavy buying", "T"]]],
+  ["How do you make your final investment decision?", [["Reading financial reports to check real health and profits", "L"], ["Following hot industry trends and momentum", "T"], ["Following buy/sell signals from models or formulas", "T"], ["Reading the big picture of the economy and cycles", "L"]]],
+  ["How many years of experience do you have trading stocks or funds?", [["Less than 1 year", null], ["1 to 3 years", null], ["3 to 5 years", null], ["More than 5 years", null]]],
+];
+
+/* ---------- Axes (code order: Tempo, Style, Risk, Spread) ---------- */
+const AXES = [
+  { p: ["T", "L"], names: ["Tactical", "Long-Term"], label: "Tempo", tie: 0 },
+  { p: ["V", "G"], names: ["Value / Income", "Growth / Momentum"], label: "Style", tie: 2 },
+  { p: ["C", "B"], names: ["Cautious", "Bold"], label: "Risk Attitude", tie: 5 },
+  { p: ["F", "D"], names: ["Focused", "Diversified"], label: "Spread", tie: 7 },
+];
+
+/* ---------- 16 archetypes ----------
+   [0] code [1] emoji [2] animal [3] title
+   [4] decision style  [5] stress response  [6] risk posture  [7] vulnerability
+   [8] core strengths  [9] blind spots  [10] advanced analysis
+*/
+const A = [
+  ["L-V-C-F", "🐘", "Elephant", "The Patient Custodian",
+   "You prefer a small number of large, steady companies that pay reliable dividends. You judge each holding by the durability of its cash flow rather than by short-term price moves. New money is added only when a better option clearly replaces an existing one, and turnover stays low.",
+   "When prices fall, you stay calm. Portfolio income acts as a buffer, so you can hold through noise. You usually sell only when the business case weakens, not simply because the price has dropped.",
+   "You protect capital first. Positions can be large, but you choose quality and predictable businesses, so swings are usually milder than the concentration alone would suggest.",
+   "You may anchor too strongly on past winners and underestimate how quickly a solid company can be disrupted. Structural change that has not yet shown up in the numbers is easy to dismiss.",
+   "Patience under volatility, capital-preservation instinct, high-conviction selection of durable businesses, and emotional steadiness when prices move against you.",
+   "Anchoring on familiar winners, under-weighting structural disruption, and moving too slowly when a franchise’s economics quietly deteriorate.",
+   "Review each major holding at least once a year so patience does not become neglect. Cap any single name so a permanent impairment cannot dominate results. Keep a short watch-list of potential disruptors."],
+
+  ["L-V-C-D", "🐢", "Tortoise", "The Steady Compounder",
+   "You build a broad, low-turnover base of value and income assets and rely on time, diversification and reinvestment rather than frequent tactical moves. Decisions emphasise valuation discipline, dividend sustainability and broad sector coverage.",
+   "Market drops feel like normal weather rather than emergencies. You keep contributing on schedule and rarely sell just because price has fallen. Stress is managed by returning to the written process.",
+   "You stay conservative, diversified and low-volatility. Risk is managed mainly through breadth and asset quality. Annual loss tolerance is modest; survival and steady compounding rank above capturing every upside.",
+   "Caution and process adherence can leave excess long-run returns on the table when higher-growth opportunities appear. A rules-based system may also become outdated while still being faithfully followed.",
+   "Process discipline, emotional regulation, low-cost compounding, and systematic risk spreading. Strength lies in staying invested and avoiding the behavioural traps that destroy most investors’ returns.",
+   "Inertia that leaves excess return on the table; difficulty recognising when a rules-based system needs updating; possible under-allocation to higher-growth opportunities.",
+   "Audit your process every 18–24 months to check whether the current rules still match the opportunity set. Allow a small, explicitly sized sleeve for higher-conviction ideas. Keep costs low."],
+
+  ["L-V-B-F", "🦏", "Rhino", "The Contrarian Charger",
+   "You take large, deep-value positions in unloved or out-of-favour companies and commit fully once the valuation and balance-sheet case is clear. Holding periods are multi-year and you are comfortable standing apart from consensus.",
+   "Steep declines are met with hold or add behaviour as long as the original thesis remains intact. Being early is accepted as the cost of entry. The critical test is whether fundamentals still support the valuation case.",
+   "You express high risk tolerance through concentration rather than leverage or short-term trading. A few ideas dominate the book; each is sized for meaningful impact if correct.",
+   "Conviction can harden into refusal to admit a thesis is broken. Multi-year underperformance may exhaust patience before the re-rating occurs. Concentration means a single permanent impairment has outsized impact.",
+   "Independent thinking, high pain tolerance, ability to buy when others panic, and deep research into under-loved assets.",
+   "Value-trap stubbornness, slow recognition that a thesis is broken, and over-concentration that turns temporary underperformance into permanent capital loss.",
+   "Write an explicit thesis-break checklist at entry and review it on a fixed calendar, not only when price is painful. Pre-define maximum position size so even a total loss remains survivable."],
+
+  ["L-V-B-D", "🦡", "Badger", "The Distressed Digger",
+   "You scan across many cheap, out-of-favour industries and build a diversified book of distressed or deeply discounted situations. Decisions combine quantitative screens for cheapness with qualitative work on balance-sheet survival and potential catalysts.",
+   "Broad sell-offs are treated as shopping lists. New capital is deployed while others are forced sellers. Stress response is active rather than passive: volatility expands the opportunity set.",
+   "Bold risk tolerance is expressed through many smaller contrarian bets rather than extreme concentration. Single-name risk is limited by diversification, but overall volatility can still be high because the underlying assets are distressed.",
+   "Primary vulnerability is catching falling knives across too many names without enough monitoring depth. Capital can sit in situations that never catalyse, and the operational burden of tracking a large, heterogeneous book can become a bottleneck.",
+   "Opportunistic scanning, research stamina, ability to act in chaos, and comfort with messy multi-name portfolios.",
+   "Over-diversification into low-quality situations, insufficient monitoring bandwidth, and catching falling knives without a clear catalyst map.",
+   "Impose a hard limit on the number of active situations so monitoring stays realistic. Require a written catalyst or normalisation thesis for every name. Periodically force a kill-list review."],
+
+  ["L-G-C-F", "🦉", "Owl", "The Moat Analyst",
+   "You study filings, competitive dynamics and unit economics in depth, then concentrate in a few quality growth companies that possess durable advantages. New positions are added slowly and only when valuation still offers a margin of safety relative to expected growth.",
+   "Drawdowns trigger a re-read of the original thesis rather than immediate action. Calm is maintained unless fundamentals—pricing power, share trends, return on capital—have changed. Price alone is insufficient reason to exit.",
+   "Measured risk is taken through quality selection and concentration rather than through diversification or high turnover. Position sizes can be meaningful, but the underlying businesses are chosen for resilience.",
+   "Main vulnerability is analysis paralysis and overconfidence in the precision of one’s own research. Secondary risk is missing faster-moving opportunities while still gathering data, or holding too long because the original model has not yet been clearly invalidated.",
+   "Deep analytical thoroughness, quality bias, intellectual honesty about competitive advantage, and the patience to wait for the right price on great businesses.",
+   "Analysis paralysis, over-confidence in own research, and the possibility of missing faster-moving opportunities while still gathering data.",
+   "Set a decision deadline once the core data set is complete so analysis does not become endless. Maintain a short fast-track list of high-quality names that can be acted on with less incremental work when price becomes attractive."],
+
+  ["L-G-C-D", "🐋", "Whale", "The Market Rider",
+   "You own the broad market and long-term growth primarily through index or systematic exposure, trusting economic expansion and compounding over individual stock selection. Decisions centre on asset allocation, cost control and contribution discipline.",
+   "Volatility is absorbed with little reaction. The plan—not the news—drives action. Stress is managed by returning to the written allocation and contribution rules. Selling is rare and usually limited to rebalancing or life-event liquidity needs.",
+   "Moderate, market-level risk with low idiosyncratic exposure. The portfolio is designed to ride the equity risk premium rather than to outperform it. Annual swings track the market.",
+   "Primary vulnerability is complacency about concentration inside popular indices and sequence-of-returns risk near large withdrawals or retirement. Secondary risk is under-appreciation of active opportunities in inefficient corners of the market.",
+   "Systems thinking, emotional detachment from daily noise, low-cost efficiency, and faith in long-term economic expansion.",
+   "Complacency about hidden concentration inside indices, sequence-of-returns risk near large withdrawals, and under-appreciation of active opportunities in inefficient market corners.",
+   "Stress-test the plan against sequence-of-returns scenarios, especially if large withdrawals are foreseeable. Periodically examine index concentration and decide consciously whether to accept or tilt away."],
+
+  ["L-G-B-F", "🦅", "Eagle", "The High-Conviction Visionary",
+   "You commit large positions to a handful of high-potential growth companies after extended observation and research. Decision process combines deep fundamental work with a long-arc view of how an industry or business model will evolve. Position sizes are aggressive once conviction is reached.",
+   "Drawdowns are looked through to the long arc of the thesis. Adding to winners under pressure is common when the fundamental trajectory remains intact. The emotional stance prioritises the multi-year payoff over intermediate mark-to-market pain.",
+   "High risk, high concentration, long horizon. The portfolio is intentionally unbalanced toward a few ideas expected to deliver outsized returns. Diversification is secondary to impact.",
+   "Core vulnerability is confirmation bias that filters disconfirming evidence, combined with drawdowns severe enough to force an early exit before the thesis pays off. Single-name or single-theme failure can dominate multi-year results.",
+   "Long-arc vision, high conviction, ability to size up when conviction is highest, and tolerance for multi-year underperformance in service of a big thesis.",
+   "Confirmation bias that filters disconfirming evidence, severe drawdowns that can force an early exit, and the risk that a single thesis failure dominates the portfolio outcome.",
+   "Write the falsification conditions for every large position at entry and review them on a fixed calendar independent of price. Cap single-name exposure so a total loss remains survivable."],
+
+  ["L-G-B-D", "🦒", "Giraffe", "The Theme Architect",
+   "You construct a broad portfolio of long-term growth themes (AI, energy transition, demographics, etc.) and allocate across multiple narratives rather than a single company. Decisions start with theme selection and sizing, then cascade into vehicles that express those themes.",
+   "Daily noise is largely ignored; attention sits at the theme level. Stress rises when several themes fall together, revealing that what looked like diversification was actually shared exposure. The response is to reassess theme weights rather than to trade individual names reactively.",
+   "Bold risk tolerance expressed through diversified exposure to correlated growth narratives. Volatility can be high when risk appetite for growth assets contracts, even if the book contains many individual positions.",
+   "Primary vulnerability is false diversification: many themes that share the same underlying risk factors collapse together. Secondary risk is narrative over-attachment that delays exit when a theme’s fundamental or valuation case has deteriorated.",
+   "Strategic theme recognition, ability to allocate across multiple growth narratives, and comfort with higher volatility in pursuit of structural change.",
+   "False diversification across correlated themes, narrative over-attachment, and under-appreciation of valuation risk when many high-growth stories become expensive at once.",
+   "Map the common factor exposures across themes and size the overall book to those factors, not only to the theme labels. Set valuation or momentum off-ramps for each theme. Keep ballast outside the growth-theme complex."],
+
+  ["T-V-C-F", "🐿️", "Squirrel", "The Harvester",
+   "You seek small, high-probability gains from dividends, mean-reversion or cheap short-term bargains in a limited number of spots, with relatively short holding periods. Decisions emphasise quick feedback, defined risk, and the accumulation of many small edges rather than large multi-year payoffs.",
+   "When a trade turns, the response is to cut or sit out quickly in order to protect stored gains. Capital preservation in the short run ranks above giving a position more room. Stress is managed by reducing exposure rather than by averaging down.",
+   "Cautious risk posture with short horizon and tight loss limits. Individual positions are not allowed to create large portfolio drawdowns. The overall book is designed to survive frequent small losses so that the compounding of small gains remains possible.",
+   "Main vulnerability is over-trading small gains and missing larger long-term compounding opportunities. Secondary risk is frictional cost and tax drag from frequent activity, and the possibility that tight stops systematically cut winners short in trending markets.",
+   "Quick risk control, income focus, tactical patience within a short horizon, and discipline around small high-probability setups.",
+   "Over-trading friction, missing larger compounding opportunities by focusing only on small safe wins, and possible under-utilisation of longer-duration edge.",
+   "Track return after all costs and taxes so the true edge of the short-horizon approach is visible. Reserve a small sleeve for longer-duration ideas. Pre-commit maximum trade frequency."],
+
+  ["T-V-C-D", "🐜", "Ant", "The Colony Builder",
+   "You collect many small, steady gains from a wide base of positions and protect the overall colony first. Decisions are rule-based or screen-based; individual discretion is limited. Diversification is the primary risk-control tool.",
+   "Risk rules are followed mechanically. When losses approach pre-defined limits, exposure is reduced without debate. Stress response is procedural rather than improvisational—return to the rule set, reduce size, wait for the next valid setup.",
+   "Cautious and highly diversified. Risk is managed by breadth and by strict per-position and portfolio-level loss limits. The design accepts lower upside per idea in exchange for a smoother overall path and lower probability of large single-name damage.",
+   "Primary vulnerability is frictional costs and return dilution from too many small positions. Secondary risk is rigidity: a process that worked in one regime may continue to be followed after the opportunity set has changed.",
+   "Process adherence, risk-rule discipline, broad diversification, and steady incremental progress.",
+   "Return dilution from too many small positions, frictional costs that erode edge, and rigidity when the market regime changes and the process needs adaptation.",
+   "Measure net returns after all costs and after the dilution effect of the full position list. Periodically prune the lowest-conviction names. Build a regime-check into the process so rules can be updated when the opportunity set shifts."],
+
+  ["T-V-B-F", "🐊", "Crocodile", "The Ambush Hunter",
+   "You wait motionless for a clearly mispriced situation, then strike with significant size once the setup matches pre-defined criteria. The edge is in the timing and sizing of the strike; between setups capital often stays in ballast.",
+   "Under stress the stance remains cool. When prices fall into the pre-defined zone, the response may be to strike harder rather than to retreat. Idle periods are the cost of waiting for high-quality setups; the emotional challenge is patience, not panic.",
+   "Bold, concentrated, event-driven. Risk is taken in discrete, high-conviction bursts rather than continuously. Between setups the book may look conservative; during setups it is intentionally aggressive.",
+   "Primary vulnerability is that long idle stretches breed impatience and lead to oversized or lower-quality entries. Secondary risk is that a single poorly timed or poorly sized ambush dominates results because concentration is high when capital is deployed.",
+   "Extreme patience between setups, decisive sizing when the moment arrives, emotional control under stress, and ability to act against the crowd at inflection points.",
+   "Impatience during long idle periods that leads to forced or oversized entries, and the risk that a single poorly timed ambush dominates results.",
+   "Define the setup criteria in writing before the idle period begins so impatience cannot rewrite the rules. Pre-commit maximum position size. Maintain ballast that makes the waiting period financially and psychologically tolerable."],
+
+  ["T-V-B-D", "🐺", "Wolf", "The Opportunistic Pack Hunter",
+   "You hunt beaten-down stocks across multiple sectors for quick rebounds and rotate capital quickly as new opportunities appear. Decisions combine cheapness screens with catalysts or mean-reversion signals; the book is intentionally broad so many independent rebound attempts can run in parallel.",
+   "Volatility is treated as supply of prey. The response to market stress is to increase scanning and, where criteria are met, to add exposure rather than to retreat. Speed of action is high; the emotional risk is over-extension when many apparent opportunities appear at once.",
+   "Bold with wide, short-lived positions. Risk is taken across many names so that single-name failure is limited, but overall portfolio volatility can still be elevated because the underlying assets are often distressed or out-of-favour.",
+   "Primary vulnerability is mistaking cheapness for catalyst-readiness and making rebound-timing errors. Secondary risk is over-extension when many prey appear simultaneously, leading to a book that is both broad and still highly correlated to a single risk-on/risk-off factor.",
+   "Rapid opportunity scanning, comfort with volatility, multi-sector rotation skill, and the ability to treat market stress as inventory.",
+   "Mistaking cheapness for imminent catalyst, rebound-timing errors, and the tendency to over-extend when many apparent opportunities appear at once.",
+   "Require a catalyst or explicit mean-reversion signal in addition to cheapness before entry. Cap the total capital deployed in rebound strategies. Track hit rate and average payoff of the rebound book separately."],
+
+  ["T-G-C-F", "🐈", "Cat", "The Agile Tactician",
+   "You select a small number of active trends or momentum setups, enter with defined risk, and cut losses quickly when the trade turns. Decision process is tactical: trend or momentum confirmation, clear invalidation level, and position size that keeps any single loss small relative to the portfolio.",
+   "When a trade moves against the entry, the response is to exit quickly. Capital is protected before pride or the desire to be right. Stress is managed by reducing exposure to the failing idea rather than by averaging down or extending the thesis.",
+   "Cautious in loss, selective in trend exposure. Risk is controlled primarily by speed of exit and by limiting the number of concurrent positions. The overall posture accepts that many small losses are the cost of staying in the game for the occasional larger winner.",
+   "Primary vulnerability is whipsaws and premature exits that systematically cut winners short. Secondary risk is under-participation in strong, persistent trends that require more patience and wider stops than the default tactical rules allow.",
+   "Fast loss recognition, selective trend participation, capital-first mindset, and the ability to reset without ego. Strength lies in staying light on one’s feet and surviving choppy markets.",
+   "Whipsaw losses from premature exits, cutting winners too early, and possible under-participation in strong trends that require more patience.",
+   "Track the distribution of winners and losers to see whether stops are systematically exiting the right side of the trade. Consider a two-tier rule set—tighter stops for short-term tactical trades, wider or time-based exits for a smaller number of higher-conviction trend positions."],
+
+  ["T-G-C-D", "🐬", "Dolphin", "The Trend Surfer",
+   "You participate in many hot themes and momentum flows with relatively small size per idea, adjusting exposure as group signals and fund flows shift. Decisions lean on trend, relative strength and positioning data more than on deep single-name fundamental work. The book is broad by design.",
+   "Position size is adjusted quickly when stress appears. Group signals and flow data are used to decide whether to lean in or step back. The emotional response is social and adaptive rather than purely internal: when the school turns, the individual tends to turn with it.",
+   "Cautious per position, broad across themes. Individual losses are kept small; risk is managed by diversification of themes and by the ability to exit the whole complex if flows reverse. The posture accepts that some late entries and early exits are the cost of staying aligned with the dominant intermediate trend.",
+   "Primary vulnerability is herding and late entries into crowded themes. Secondary risk is that many seemingly independent themes reverse together when liquidity or risk appetite contracts, producing correlated losses across the diversified book.",
+   "Social-signal awareness, theme agility, position-size flexibility, and comfort operating inside information-rich, flow-driven markets.",
+   "Herding into crowded trades, late entries after the move is already well underway, and vulnerability when group signals reverse simultaneously.",
+   "Add a simple crowding or valuation overlay so pure flow-following does not automatically buy the most extended names. Cap total exposure to any single theme and to the overall hot-theme complex. Maintain non-thematic ballast."],
+
+  ["T-G-B-F", "🐆", "Cheetah", "The Momentum Sprinter",
+   "You go nearly all-in on one (or a very small number of) hot momentum names and chase breakouts with high urgency. Decision process is speed-driven: breakout or momentum confirmation, rapid sizing, and an expectation that the move will be captured in days to weeks rather than months to years.",
+   "Reaction speed is high. Sharp swings are tolerated while the momentum remains intact, but the same speed that enters can also chase a reversal if the exit rule is not equally disciplined. Stress response is kinetic—more action, faster decisions—rather than analytical pause.",
+   "Very high risk, extreme concentration, short horizon. The portfolio can be dominated by a single name or a single momentum factor. Risk is accepted as the necessary condition for capturing large, fast moves; diversification and capital preservation are secondary during the sprint.",
+   "Primary vulnerability is overconfidence and ruin risk from a single position gone wrong. Secondary risks include chasing reversals, failing to exit when momentum breaks, and the compounding of losses if several consecutive sprints fail.",
+   "Explosive timing, extreme focus, willingness to size aggressively when momentum is clear, and the ability to capture short, high-powered moves.",
+   "Overconfidence, single-position ruin risk, and the tendency to chase reversals or stay too long after the initial impulse fades.",
+   "Hard-cap single-name exposure so a total loss remains survivable within the overall capital plan. Write the exit rule before entry and treat it as non-negotiable. Keep a permanent ballast sleeve that is never used for sprint capital."],
+
+  ["T-G-B-D", "🐒", "Monkey", "The Policy Swinger",
+   "You swing across many hot topics, policy plays and short-cycle narratives with high energy and high turnover. Decisions are narrative- and catalyst-driven; the book is intentionally broad and is rotated as new stories appear and old ones fade. Holding periods are short; the edge is in speed of absorption and rotation.",
+   "When bets fail, capital is moved to the next branch quickly rather than defended. Fatigue becomes the risk when many high-energy positions fail in sequence. Stress response is motion—new ideas, new entries—rather than retreat into cash or deep analysis.",
+   "Bold, broad, high-turnover. Risk is taken across many short-cycle ideas so that single-name failure is limited, but overall portfolio volatility and cost drag can be high. The posture accepts elevated activity and elevated short-term noise as the price of staying close to the information edge.",
+   "Primary vulnerability is narrative chasing without sufficient fundamental or valuation anchor, combined with over-trading that compounds costs against returns. Secondary risk is mental and process fatigue when several high-energy bets fail in sequence, leading to either revenge trading or abrupt abandonment of the style.",
+   "High energy, rapid narrative absorption, multi-theme agility, and comfort in news-driven, policy-sensitive markets.",
+   "Narrative chasing without sufficient fundamental anchor, over-trading that compounds costs, and mental fatigue when several high-energy bets fail in sequence.",
+   "Impose a hard turnover or trade-count budget so costs cannot silently erase edge. Require a minimum fundamental or valuation checklist even for short-cycle policy plays. Build mandatory recovery periods after a cluster of losses so fatigue does not drive the next set of decisions."],
+];
+
+
+
+
+const LEVELS = ["Cub", "Adult", "Adult", "Elder"];
+const CATEGORIES = ["Family Office Principal", "Venture Capitalist", "Institutional Allocator", "Private Investor", "Other"];
+const TICKETS = ["Under $100K", "$100K – $500K", "$500K – $2M", "$2M – $10M", "Above $10M"];
+
+/* ---------- Scoring ---------- */
+// Secondary risk signals: option index -> pole, so Risk Attitude is read from more than 3 questions
+const RISK2 = { 2: { 0: "C" }, 3: { 0: "B", 2: "C" }, 4: { 0: "C", 1: "B" }, 7: { 0: "B", 3: "C" }, 8: { 0: "B", 2: "C", 3: "C" }, 9: { 0: "C", 1: "B", 3: "B" }, 10: { 0: "C", 2: "C" }, 14: { 0: "C", 1: "B", 3: "C" }, 15: { 2: "C" } };
+
+function score(ans) {
+  const s = { T: 0, L: 0, V: 0, G: 0, C: 0, B: 0, F: 0, D: 0 };
+  ans.forEach((a, i) => {
+    if (i === 17 || a === null) return;
+    const list = Array.isArray(a) ? a : [a];
+    // Breadth evidence for Spread: how many industries/markets were selected in Q10-Q13
+    if (i >= 9 && i <= 12 && !(i === 10 && list.includes(3))) {
+      if (list.length >= 3) s.D += 1;
+      else if (list.length === 1) s.F += 1;
+    }
+    list.forEach((o) => {
+      const p = Q[i][1][o][1];
+      if (p) s[p] += i === 5 ? 2 : 1; // Q6 counts double; multi-select adds one point per ticked option
+      const p2 = RISK2[i] && RISK2[i][o];
+      if (p2) s[p2] += 1;
+    });
+  });
+  const code = [];
+  const axes = AXES.map((ax) => {
+    const [p1, p2] = ax.p, a = s[p1], b = s[p2];
+    // Add-one smoothing: a short quiz never claims a certain 0% or 100%
+    const pct1 = Math.round(((a + 1) / (a + b + 2)) * 100);
+    const win = a > b ? p1 : b > a ? p2 : Q[ax.tie][1][ans[ax.tie]][1] || p1;
+    code.push(win);
+    return { ...ax, pct: [pct1, 100 - pct1], win, n: a + b };
+  });
+  return { code: code.join("-"), axes, level: LEVELS[ans[17]] };
+}
+
+
+
+
+
+const MULTI = new Set([9, 10, 11, 12, 14]); // Q10, Q11, Q12, Q13, Q15: choose as many as you want
+const inputCls = "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/60 focus:border-indigo-400";
+const btn = "btn-primary inline-flex items-center justify-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2";
+const root = document.getElementById("app");
+const S = { stage: "landing", page: 0, ans: Array(18).fill(null), showErr: false, form: { name: "", email: "", linkedin: "", category: "", categoryOther: "", ticket: "" }, err: {}, saving: false, save: null, fb: null, prev: [0, 0, 0], lastSel: null };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* Firebase: anonymous auth with environment credentials */
+const fbReady = (async () => {
+  if (!firebaseConfig) return;
+  try {
+    const v = "10.12.2", base = `https://www.gstatic.com/firebasejs/${v}/`;
+    const [a, au, fs] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
+    const app = a.initializeApp(firebaseConfig);
+    const auth = au.getAuth(app);
+    await au.signInAnonymously(auth);
+    S.fb = { auth, db: fs.getFirestore(app), fs };
+  } catch (e) { console.error("Firebase init failed", e); }
+})();
+
+const range = () => PAGES[S.page].range;
+const pageDone = () => S.ans.slice(range()[0], range()[1]).every((a) => a !== null);
+const answered = () => S.ans.filter((a) => a !== null).length;
+
+const SHORT = ["Horizon", "Strategy", "Behavior"];
+const CHECK = '<svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg>';
+const a11 = () => (S.anim ? "rise" : "");
+
+function landing() {
+  return `<main class="${a11()} flex min-h-screen flex-col items-center justify-center px-6 text-center">
+  <div class="mb-8 flex h-24 w-24 items-center justify-center rounded-[1.75rem] bg-white text-5xl shadow-[0_12px_36px_-14px_rgba(99,102,241,.4)] ring-1 ring-indigo-100"><span class="bob inline-block">🐬</span></div>
+  <p class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-500">Risk attitude profile</p>
+  <h1 class="max-w-xl text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl">16-Animal Risk Attitude Assessment</h1>
+  <p class="mt-5 max-w-md text-base leading-relaxed text-slate-500">Discover how you really invest — your tempo, style, risk attitude and portfolio spread.</p>
+  <button data-act="start" class="${btn} mt-10 !rounded-2xl !px-10 !py-4 !text-base transition hover:-translate-y-0.5">Start Assessment →</button>
+  <p class="mt-6 text-sm text-slate-400">18 questions · 3 sections · about 4 minutes</p></main>`;
+}
+
+function stepper() {
+  return `<div class="flex gap-3">${PAGES.map((p, i) => {
+    const n = S.ans.slice(p.range[0], p.range[1]).filter((v) => v !== null).length;
+    return `<div class="flex-1"><div class="progress-track"><div class="progress-fill" data-w="${(n / 6) * 100}" style="width:${S.prev[i] || 0}%"></div></div><p class="mt-2 text-[11px] ${i === S.page ? "font-semibold text-indigo-600" : "text-slate-400"}">${SHORT[i]}</p></div>`;
+  }).join("")}</div>`;
+}
+
+function quiz() {
+  const [from, to] = range();
+  const n = S.ans.slice(from, to).filter((v) => v !== null).length;
+  const qs = Q.slice(from, to).map(([text, opts], k) => {
+    const qi = from + k, done = S.ans[qi] !== null, miss = S.showErr && !done;
+    const os = opts.map(([label], oi) => {
+      const on = MULTI.has(qi) ? (S.ans[qi] || []).includes(oi) : S.ans[qi] === oi;
+      return `<button type="button" role="${MULTI.has(qi) ? "checkbox" : "radio"}" aria-checked="${on}" data-q="${qi}" data-o="${oi}" class="opt group flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-sm leading-snug focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${on ? "on border-indigo-500 text-slate-900" : "border-slate-200 bg-white text-slate-600"}">
+      <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold transition ${on && S.lastSel === qi + "-" + oi ? "pop" : ""} ${on ? "bg-indigo-600 text-white shadow-sm shadow-indigo-200" : "bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-700"}">${on ? CHECK : String.fromCharCode(65 + oi)}</span><span>${esc(label)}</span></button>`;
+    }).join("");
+    return `<section id="q${qi}" class="card p-5 transition ${miss ? "!border-red-300 ring-2 ring-red-100" : ""}">
+    <div class="mb-4 flex items-start gap-3"><span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${done ? "bg-indigo-600 text-white shadow-sm shadow-indigo-200" : "bg-slate-100 text-slate-500"}">${done ? CHECK : qi + 1}</span>
+    <div><h3 class="font-semibold leading-snug text-slate-800">${esc(text)}</h3>${MULTI.has(qi) ? '<p class="mt-1 text-xs font-medium text-indigo-500">Choose as many as you want</p>' : ""}</div></div>
+    <div role="${MULTI.has(qi) ? "group" : "radiogroup"}" aria-label="Question ${qi + 1}" class="space-y-2">${os}</div>
+    ${miss ? '<p class="mt-3 text-xs font-medium text-red-600">Please choose an answer to continue.</p>' : ""}</section>`;
+  }).join("");
+  return `<header class="sticky top-0 z-10 border-b border-slate-200/60 bg-white/75 backdrop-blur-md"><div class="mx-auto max-w-2xl px-5 py-4">${stepper()}</div></header>
+  <main class="${a11()} mx-auto max-w-2xl px-5 pb-32 pt-8">
+  <p class="text-xs font-semibold uppercase tracking-wider text-indigo-500">Section ${S.page + 1} of 3</p>
+  <h2 class="mt-1.5 text-2xl font-bold tracking-tight text-slate-800">${PAGES[S.page].title}</h2>
+  <div class="mt-7 space-y-4">${qs}</div></main>
+  <footer class="fixed inset-x-0 bottom-0 z-10 border-t border-slate-200/70 bg-white/90 backdrop-blur-md"><div class="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-3.5">
+  <button data-act="back" class="rounded-xl px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100">← Back</button>
+  <span class="text-sm ${n === 6 ? "font-semibold text-indigo-600" : "text-slate-500"}">${n === 6 ? "All set" : `${n} of 6 answered`}</span>
+  <button data-act="next" class="${btn} ${n === 6 ? "" : "opacity-55"}">${S.page < 2 ? "Next" : "Continue"} →</button></div></footer>`;
+}
+
+function lead() {
+  const f = S.form, e = S.err;
+  const inp = ([k, l, t, ph, req]) => `<div><label class="mb-1.5 block text-sm font-medium text-slate-700">${l}${req ? ' <span class="text-red-500">*</span>' : ""}</label><input name="${k}" type="${t}" value="${esc(f[k])}" placeholder="${ph}" class="${inputCls} ${e[k] ? "!border-red-300 !ring-red-200" : ""}">${e[k] ? `<p class="mt-1.5 text-xs text-red-600">${e[k]}</p>` : ""}</div>`;
+  const sel = ([k, l, opts]) => `<div><label class="mb-1.5 block text-sm font-medium text-slate-700">${l} <span class="text-red-500">*</span></label><select name="${k}" class="${inputCls} ${e[k] ? "!border-red-300" : ""}"><option value="">Select…</option>${opts.map((o) => `<option ${f[k] === o ? "selected" : ""}>${o}</option>`).join("")}</select>${e[k] ? `<p class="mt-1.5 text-xs text-red-600">${e[k]}</p>` : ""}</div>`;
+  return `<main class="${a11()} mx-auto flex min-h-screen max-w-lg flex-col justify-center px-5 py-10">
+  <div class="mb-7 text-center">
+    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200">${CHECK.replace("h-3.5 w-3.5", "h-7 w-7")}</div>
+    <h2 class="text-2xl font-bold tracking-tight text-slate-800">All 18 questions answered</h2>
+    <p class="mt-2 text-sm text-slate-500">Tell us a little about yourself to reveal your animal.</p>
+  </div>
+  <div class="card p-7 shadow-xl shadow-slate-200/50">
+  <form id="lead" novalidate class="space-y-4">
+  ${inp(["name", "Full name", "text", "Jane Doe", true])}${inp(["email", "Professional email", "email", "jane@firm.com", true])}${inp(["linkedin", "LinkedIn profile URL (optional)", "url", "https://linkedin.com/in/...", false])}
+  ${sel(["category", "Investor category", CATEGORIES])}${f.category === "Other" ? inp(["categoryOther", "Please specify your category", "text", "e.g. Angel investor, researcher, student", true]) : ""}${sel(["ticket", "Deployment capacity / ticket size", TICKETS])}
+  <button type="submit" ${S.saving ? "disabled" : ""} class="${btn} mt-3 w-full !py-3.5 disabled:opacity-60">${S.saving ? "Preparing your report…" : "Reveal my results →"}</button></form></div></main>`;
+}
+
+const POLES = {
+  T: { name: "Tactical", short: "Shorter holding periods. Acts on trends, signals, catalysts and near-term price action." },
+  L: { name: "Long-Term", short: "Multi-year holds. Decisions driven by fundamentals, business quality and economic cycles." },
+  V: { name: "Value / Income", short: "Drawn to price discipline, cash flow, dividends and a margin of safety." },
+  G: { name: "Growth / Momentum", short: "Drawn to expanding earnings, structural themes and rising price trends." },
+  C: { name: "Cautious", short: "Capital preservation first. Prefers smaller, more tolerable swings." },
+  B: { name: "Bold", short: "Accepts large swings and drawdowns for the chance of higher returns." },
+  F: { name: "Focused", short: "Few high-conviction holdings or industries known in depth." },
+  D: { name: "Diversified", short: "Many holdings, industries or broad index exposure so no single outcome dominates." },
+};
+const LEGEND = [["T", "Tactical", "short-term; acts on signals and news"], ["L", "Long-Term", "holds for years; follows fundamentals"], ["V", "Value / Income", "cheap prices, dividends, cash flow"], ["G", "Growth / Momentum", "faster growth, themes, rising trends"], ["C", "Cautious", "protects capital; prefers small swings"], ["B", "Bold", "accepts big swings for higher returns"], ["F", "Focused", "a few high-conviction holdings"], ["D", "Diversified", "many holdings, spread out"]];
+const LEAN = (p) => (p >= 80 ? "Very strong lean" : p >= 65 ? "Clear lean" : p >= 55 ? "Moderate lean" : "Slight lean, close to the border");
+const EXP = {
+  Cub: ["< 1 year", "Cub: < 1 year of experience. Your style is still forming."],
+  Adult: ["1–5 years", "Adult: 1–5 years of experience. Your pattern is becoming clearer."],
+  Elder: ["> 5 years", "Elder: > 5 years of experience. Strengths are reliable; habits are well tested."],
+};
+function results() {
+  const r = score(S.ans), a = A.find((x) => x[0] === r.code), exp = EXP[r.level];
+  const wins = r.axes.map((ax) => ({ ax, pole: POLES[ax.win], pct: ax.win === ax.p[0] ? ax.pct[0] : ax.pct[1] }));
+  const st = (i) => (S.anim ? `style="animation-delay:${i * 80}ms"` : "");
+  const card = "card p-5";
+  const sec = (i, cls, inner) => `<section class="${a11()} ${cls}" ${st(i)}>${inner}</section>`;
+
+  const axisCards = wins.map(({ ax, pole, pct }) => {
+    const other = ax.p[0] === ax.win ? ax.p[1] : ax.p[0];
+    const otherPole = POLES[other];
+    return `<div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+      <div class="mb-1.5 flex items-center justify-between">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">${ax.label}</p>
+        <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-600">${LEAN(pct)}</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-800">${pole.name} <span class="font-normal text-indigo-600">${pct}%</span></p>
+      <p class="mt-1 text-xs leading-relaxed text-slate-600">${pole.short}</p>
+      <p class="mt-2 text-[11px] text-slate-400">vs ${otherPole.name} ${100 - pct}%</p>
+    </div>`;
+  }).join("");
+
+  const bars = r.axes.map((ax) => `
+    <div>
+      <div class="mb-1.5 flex justify-between text-xs text-slate-500">
+        <span class="font-medium text-slate-600">${ax.label}</span>
+        <span>${ax.names[0]} ${ax.pct[0]}% · ${ax.pct[1]}% ${ax.names[1]}</span>
+      </div>
+      <div class="flex h-2.5 overflow-hidden rounded-full bg-slate-100">
+        <div class="bg-gradient-to-r from-indigo-400 to-indigo-600" data-w="${ax.pct[0]}" style="width:0;transition:width .75s cubic-bezier(.22,1,.36,1)"></div>
+        <div class="bg-slate-200" data-w="${ax.pct[1]}" style="width:0;transition:width .75s cubic-bezier(.22,1,.36,1)"></div>
+      </div>
+    </div>`).join("");
+
+  const traits = [
+    ["How you decide", a[4]],
+    ["Under stress", a[5]],
+    ["Risk style", a[6]],
+    ["Main vulnerability", a[7]],
+  ].map(([t, b]) => `
+    <div class="${card}">
+      <h3 class="mb-2 text-sm font-semibold text-slate-800">${t}</h3>
+      <p class="text-sm leading-relaxed text-slate-600">${b}</p>
+    </div>`).join("");
+
+  const note = S.save === "failed" ? '<p class="noprint mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">Report shown below.</p>' : "";
+
+  return `<main class="mx-auto max-w-2xl px-5 py-10">
+  <section class="${a11()} hero-glow relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 px-6 pb-10 pt-12 text-center text-white">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(129,140,248,.18),_transparent_55%)]"></div>
+    <div class="pointer-events-none absolute -bottom-8 left-1/2 h-24 w-[120%] -translate-x-1/2 rounded-[100%] bg-indigo-500/20 blur-2xl"></div>
+    <span class="twinkle absolute left-[18%] top-10 text-lg">✨</span>
+    <span class="twinkle absolute right-[20%] top-16 text-base" style="animation-delay:.8s">✨</span>
+    <div data-act="poke" title="Tap me" class="relative mx-auto flex h-36 w-36 cursor-pointer select-none items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25 shadow-inner">
+      <span class="bob inline-block text-7xl">${a[1]}</span>
+    </div>
+    <div class="shadowpulse mx-auto mt-3 h-2 w-20 rounded-full bg-black/30 blur-sm"></div>
+    <div class="relative mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-medium">
+      <span class="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm">${a[0]}</span>
+      <span class="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm">${a[2]} · ${r.level}</span>
+    </div>
+    <h1 class="relative mt-4 text-3xl font-bold tracking-tight sm:text-4xl">${a[3]}</h1>
+    <p class="relative mx-auto mt-3 max-w-sm text-sm leading-relaxed text-white/70">${exp[1]}</p>
+  </section>
+  ${note}
+
+  ${sec(1, "mt-6", `
+    <div class="${card}">
+      <h3 class="mb-2 text-sm font-semibold text-slate-800">Summary</h3>
+      <p class="text-sm leading-relaxed text-slate-600">${a[4]}</p>
+    </div>`)}
+
+  ${sec(2, "mt-4", `
+    <div class="rounded-xl border border-slate-200/80 bg-slate-50/90 p-4">
+      <p class="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Letter key</p>
+      <div class="grid gap-x-4 gap-y-1.5 sm:grid-cols-2 text-xs text-slate-600">
+        <p><span class="inline-block w-5 font-bold text-indigo-600">T</span> Tactical — short holds; trends & signals</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">L</span> Long-Term — multi-year; fundamentals</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">V</span> Value / Income — price, cash flow, dividends</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">G</span> Growth / Momentum — earnings, themes, trends</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">C</span> Cautious — protect capital; smaller swings</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">B</span> Bold — accept large swings for higher return</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">F</span> Focused — few high-conviction holdings</p>
+        <p><span class="inline-block w-5 font-bold text-indigo-600">D</span> Diversified — many holdings or broad indexes</p>
+      </div>
+    </div>`)}
+
+  ${sec(3, "mt-4", `
+    <div class="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+      <p class="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-indigo-500">Experience level</p>
+      <p class="text-xs leading-relaxed text-slate-600"><span class="font-semibold text-slate-800">Cub</span>: &lt; 1 year · <span class="font-semibold text-slate-800">Adult</span>: 1–5 years · <span class="font-semibold text-slate-800">Elder</span>: &gt; 5 years</p>
+    </div>`)}
+
+  ${sec(4, "mt-5", `
+    <h3 class="mb-3 text-sm font-bold tracking-tight text-slate-800">Your four axes</h3>
+    <div class="grid gap-3 sm:grid-cols-2">${axisCards}</div>
+    <div class="mt-5 space-y-3.5">${bars}</div>
+  `)}
+
+  ${sec(5, "mt-5 space-y-3", traits)}
+
+  ${sec(6, "mt-5", `
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="${card}">
+        <h3 class="mb-2 text-sm font-semibold text-slate-800">Strengths</h3>
+        <p class="text-sm leading-relaxed text-slate-600">${a[8]}</p>
+      </div>
+      <div class="${card}">
+        <h3 class="mb-2 text-sm font-semibold text-slate-800">Blind spots</h3>
+        <p class="text-sm leading-relaxed text-slate-600">${a[9]}</p>
+      </div>
+    </div>`)}
+
+  ${sec(7, "mt-5", `
+    <div class="${card}">
+      <h3 class="mb-2 text-sm font-semibold text-slate-800">What to watch</h3>
+      <p class="text-sm leading-relaxed text-slate-600">${a[10]}</p>
+    </div>`)}
+
+  ${sec(8, "mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 text-xs leading-relaxed text-slate-500",
+    `<span class="font-semibold text-slate-700">Note.</span> Self-assessment only. Not financial, investment or tax advice.`)}
+
+  <div class="noprint mt-8 flex flex-wrap justify-center gap-3">
+    <button data-act="print" class="${btn}">Save as PDF</button>
+    <button data-act="restart" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">↺ Retake</button>
+  </div>
+</main>`;
+}
+
+function render(keepScroll) {
+  const y = window.scrollY;
+  S.anim = !keepScroll;
+  if (!keepScroll) S.lastSel = null;
+  root.innerHTML = { landing, quiz, lead, results }[S.stage]();
+  window.scrollTo(0, keepScroll ? y : 0);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    root.querySelectorAll("[data-w]").forEach((el) => (el.style.width = el.dataset.w + "%"));
+    S.prev = PAGES.map((pg) => (S.ans.slice(pg.range[0], pg.range[1]).filter((v) => v !== null).length / 6) * 100);
+  }));
+}
+
+root.addEventListener("click", (ev) => {
+  const t = ev.target.closest("[data-q],[data-act]");
+  if (!t) return;
+  if (t.dataset.q !== undefined) {
+    const qi = +t.dataset.q, was = S.ans[qi];
+    const o = +t.dataset.o;
+    if (MULTI.has(qi)) {
+      const cur = S.ans[qi] || [], nx = cur.includes(o) ? cur.filter((x) => x !== o) : [...cur, o].sort();
+      S.ans[qi] = nx.length ? nx : null; S.lastSel = qi + "-" + o; return render(true);
+    }
+    S.ans[qi] = o; S.lastSel = qi + "-" + o; render(true);
+    if (was === null) {
+      const n = S.ans.findIndex((v, i) => i > qi && i < range()[1] && v === null);
+      if (n > -1) setTimeout(() => { const el = document.getElementById("q" + n); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 280);
+    }
+    return;
+  }
+  const act = t.dataset.act;
+  if (act === "poke") { t.classList.remove("jump"); void t.offsetWidth; t.classList.add("jump"); return; }
+  if (act === "start") { S.stage = "quiz"; S.page = 0; }
+  else if (act === "next") {
+    if (!pageDone()) {
+      S.showErr = true; render(true);
+      const m = S.ans.findIndex((v, i) => i >= range()[0] && i < range()[1] && v === null);
+      const el = document.getElementById("q" + m); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    S.showErr = false;
+    if (S.page < 2) S.page++; else S.stage = "lead";
+  } else if (act === "back") {
+    S.showErr = false;
+    if (S.page > 0) S.page--; else S.stage = "landing";
+  } else if (act === "print") { return window.print();
+  } else if (act === "restart") {
+    S.ans = Array(18).fill(null); S.page = 0; S.save = null; S.err = {}; S.stage = "landing";
+  }
+  render();
+});
+
+const sync = (ev) => { if (ev.target.name in S.form) S.form[ev.target.name] = ev.target.value; };
+root.addEventListener("input", sync);
+root.addEventListener("change", (ev) => {
+  sync(ev);
+  if (ev.target.name === "category") {
+    render(true);
+    const o = document.querySelector("[name=categoryOther]");
+    if (o) o.focus();
+  }
+});
+
+root.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  if (S.saving) return;
+  const f = S.form, err = {};
+  if (!f.name.trim()) err.name = "Enter your full name.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) err.email = "Enter a valid professional email.";
+  if (f.linkedin && !/^https?:\/\/.+/i.test(f.linkedin.trim())) err.linkedin = "Enter a full URL starting with https://";
+  if (!f.category) err.category = "Select an investor category.";
+  if (f.category === "Other" && !f.categoryOther.trim()) err.categoryOther = "Please specify your investor category.";
+  if (!f.ticket) err.ticket = "Select a deployment capacity.";
+  S.err = err;
+  if (Object.keys(err).length) return render(true);
+  S.saving = true; render(true);
+  try {
+    await fbReady;
+    if (!S.fb) throw new Error("Cloud storage unavailable");
+    const r = score(S.ans), a = A.find((x) => x[0] === r.code), { db, auth, fs } = S.fb;
+    await fs.addDoc(fs.collection(db, "artifacts", appId, "public", "data", "investor_assessments"), {
+      name: f.name.trim(), email: f.email.trim(), linkedin: f.linkedin.trim(), category: f.category, categoryOther: f.category === "Other" ? f.categoryOther.trim() : "", ticket: f.ticket,
+      resultCode: r.code, animal: a[2], experienceLevel: r.level,
+      axisPercentiles: Object.fromEntries(r.axes.map((x) => [x.label, { [x.names[0]]: x.pct[0], [x.names[1]]: x.pct[1] }])),
+      answers: S.ans.map((v) => (Array.isArray(v) ? v.join(",") : String(v))), uid: auth.currentUser ? auth.currentUser.uid : null, createdAt: fs.serverTimestamp(),
+    });
+    S.save = "saved";
+  } catch (e) { console.error(e); S.save = "failed"; }
+  S.saving = false; S.stage = "results"; render();
+});
+
+render();
+</script>
+</body>
+</html>
