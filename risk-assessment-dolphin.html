@@ -243,7 +243,26 @@ const A = [
 
 
 const LEVELS = ["Cub", "Adult", "Adult", "Elder"];
-const CATEGORIES = ["Family Office Principal", "Venture Capitalist", "Institutional Allocator", "Private Investor", "Other"];
+const CATEGORIES = [
+  "Family Office Principal",
+  "Family Office Staff / Advisor",
+  "Venture Capitalist",
+  "Angel Investor",
+  "Private Equity",
+  "Hedge Fund",
+  "Institutional Allocator",
+  "Pension / Endowment / Foundation",
+  "Sovereign Wealth Fund",
+  "Wealth Manager / Private Banker",
+  "Broker / Financial Advisor",
+  "Corporate Treasury",
+  "Prop Trader",
+  "Crypto / Digital Assets",
+  "Private Investor",
+  "Retail Investor",
+  "Student / Researcher",
+  "Other"
+];
 const TICKETS = ["Under $100K", "$100K – $500K", "$500K – $2M", "$2M – $10M", "Above $10M"];
 
 /* ---------- Scoring ---------- */
@@ -369,7 +388,7 @@ function lead() {
   <div class="card p-7 shadow-xl shadow-slate-200/50">
   <form id="lead" novalidate class="space-y-4">
   ${inp(["name", "Full name", "text", "Jane Doe", true])}${inp(["email", "Professional email", "email", "jane@firm.com", true])}${inp(["linkedin", "LinkedIn profile URL (optional)", "url", "https://linkedin.com/in/...", false])}
-  ${sel(["category", "Investor category", CATEGORIES])}${f.category === "Other" ? inp(["categoryOther", "Please specify your category", "text", "e.g. Angel investor, researcher, student", true]) : ""}${sel(["ticket", "Deployment capacity / ticket size", TICKETS])}
+  ${sel(["category", "Investor category", CATEGORIES])}${f.category === "Other" ? inp(["categoryOther", "Please specify your category", "text", "e.g. Fund of funds, consultant, journalist", true]) : ""}${sel(["ticket", "Deployment capacity / ticket size", TICKETS])}
   <button type="submit" ${S.saving ? "disabled" : ""} class="${btn} mt-3 w-full !py-3.5 disabled:opacity-60">${S.saving ? "Preparing your report…" : "Reveal my results →"}</button></form></div></main>`;
 }
 
