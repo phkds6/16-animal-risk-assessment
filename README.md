@@ -1,13 +1,7 @@
 # 16-Animal Risk Attitude Assessment
 
-Interactive self-assessment of investment **tempo**, **style**, **risk attitude** and **portfolio spread**.
+Public assessment link (source not published in this repo):
 
-## Live demo
+**https://metal-cattle-98mvq.ship.place/**
 
-Enable GitHub Pages: **Settings → Pages → Source: Deploy from a branch → Branch: `main` / folder: `/ (root)` → Save**.
-
-Then open:
-
-**https://phkds6.github.io/16-animal-risk-assessment/**
-
-Works on phone and computer (responsive).
+Works on phone and computer.
