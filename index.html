@@ -1,1 +1,53 @@
-<PLACEHOLDER>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16-Animal Risk Attitude Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:radial-gradient(1000px 480px at 6% -10%,#E0E7FF 0%,transparent 55%),radial-gradient(900px 420px at 100% 0,#EEF2FF 0%,transparent 50%),radial-gradient(700px 360px at 50% 100%,#F1F5F9 0%,transparent 45%),#F8FAFC;background-attachment:fixed;color:#334155}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.rise{animation:rise .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes bob{0%,100%{transform:translateY(2px) rotate(-5deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+.bob{animation:bob 2s ease-in-out infinite}
+@keyframes shadowpulse{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.55);opacity:.18}}
+.shadowpulse{animation:shadowpulse 2s ease-in-out infinite}
+@keyframes pop{0%{transform:scale(.9)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+.pop{animation:pop .28s ease-out}
+@keyframes jump{0%{transform:scale(1)}30%{transform:scale(.9,1.08) translateY(-12px)}60%{transform:scale(1.06,.94)}100%{transform:scale(1)}}
+.jump{animation:jump .55s ease-out}
+@keyframes twinkle{0%,100%{opacity:.12;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+.twinkle{animation:twinkle 2.6s ease-in-out infinite}
+.card{background:rgba(255,255,255,.94);border:1px solid #e2e8f0;border-radius:1.125rem;box-shadow:0 1px 2px rgba(15,23,42,.04),0 10px 28px -14px rgba(15,23,42,.12);backdrop-filter:blur(10px)}
+.card-soft{background:rgba(255,255,255,.78);border:1px solid #e2e8f0;border-radius:1.125rem}
+.hero-glow{box-shadow:0 25px 50px -20px rgba(79,70,229,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+.opt{transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease,transform .12s ease}
+.opt:hover{border-color:#a5b4fc;background:rgba(238,242,255,.55)}
+.opt.on{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 1px rgba(99,102,241,.12),0 4px 14px -6px rgba(99,102,241,.25)}
+.btn-primary{background:linear-gradient(180deg,#6366f1 0%,#4f46e5 100%);box-shadow:0 1px 2px rgba(79,70,229,.25),0 8px 20px -8px rgba(79,70,229,.45)}
+.btn-primary:hover{background:linear-gradient(180deg,#4f46e5 0%,#4338ca 100%);box-shadow:0 1px 2px rgba(67,56,202,.3),0 10px 24px -8px rgba(67,56,202,.5)}
+.progress-track{background:#e2e8f0;border-radius:999px;overflow:hidden;height:6px}
+.progress-fill{background:linear-gradient(90deg,#818cf8,#6366f1);border-radius:999px;height:100%;transition:width .4s cubic-bezier(.22,1,.36,1)}
+button{transition:transform .15s ease,box-shadow .2s ease,background-color .2s ease,opacity .15s ease}
+button:active{transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){.bob,.shadowpulse,.twinkle,.pop,.jump{animation:none}.rise{animation:none}*{transition:none!important;scroll-behavior:auto!important}}
+@page{margin:12mm}
+@media print{
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important;transition:none!important}
+.noprint{display:none!important}
+body{background:#F8FAFC;background-attachment:scroll}
+section,main>div,.rounded-2xl,.rounded-3xl,.card{break-inside:avoid}
+}
+</style>
+</head>
+<body class="min-h-screen text-slate-700">
+<div id="app"></div>
+<script type="module">
+/* FULL APP LOADED FROM LOCAL FILE - if you see this stub the upload truncated */
+console.error('Upload incomplete - please re-upload full file');
+document.getElementById('app').innerHTML = '<main class="p-10 text-center"><h1 class="text-2xl font-bold">Upload incomplete</h1><p class="mt-2 text-slate-500">The full assessment HTML did not upload. Please ask Grok to push again.</p></main>';
+</script>
+</body>
+</html>
